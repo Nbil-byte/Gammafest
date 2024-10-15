@@ -1,0 +1,1321 @@
+2024/04/22 15:24:08 - mmengine - INFO - 
+------------------------------------------------------------
+System environment:
+    sys.platform: linux
+    Python: 3.10.12 (main, Nov 20 2023, 15:14:05) [GCC 11.4.0]
+    CUDA available: True
+    MUSA available: False
+    numpy_random_seed: 1213519669
+    GPU 0: Tesla T4
+    CUDA_HOME: /usr/local/cuda
+    NVCC: Cuda compilation tools, release 12.2, V12.2.140
+    GCC: x86_64-linux-gnu-gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+    PyTorch: 1.13.1+cu117
+    PyTorch compiling details: PyTorch built with:
+  - GCC 9.3
+  - C++ Version: 201402
+  - Intel(R) Math Kernel Library Version 2020.0.0 Product Build 20191122 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v2.6.0 (Git Hash 52b5f107dd9cf10910aaa19cb47f3abf9b349815)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - LAPACK is enabled (usually provided by MKL)
+  - NNPACK is enabled
+  - CPU capability usage: AVX2
+  - CUDA Runtime 11.7
+  - NVCC architecture flags: -gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86
+  - CuDNN 8.5
+  - Magma 2.6.1
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=11.7, CUDNN_VERSION=8.5.0, CXX_COMPILER=/opt/rh/devtoolset-9/root/usr/bin/c++, CXX_FLAGS= -fabi-version=11 -Wno-deprecated -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -fopenmp -DNDEBUG -DUSE_KINETO -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -DEDGE_PROFILER_USE_KINETO -O2 -fPIC -Wno-narrowing -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wunused-local-typedefs -Wno-unused-parameter -Wno-unused-function -Wno-unused-result -Wno-strict-overflow -Wno-strict-aliasing -Wno-error=deprecated-declarations -Wno-stringop-overflow -Wno-psabi -Wno-error=pedantic -Wno-error=redundant-decls -Wno-error=old-style-cast -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Werror=cast-function-type -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_VERSION=1.13.1, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=ON, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF, 
+
+    TorchVision: 0.14.1+cu117
+    OpenCV: 4.8.0
+    MMEngine: 0.10.3
+
+Runtime environment:
+    cudnn_benchmark: False
+    mp_cfg: {'mp_start_method': 'fork', 'opencv_num_threads': 0}
+    dist_cfg: {'backend': 'nccl'}
+    seed: 1213519669
+    Distributed launcher: none
+    Distributed training: False
+    GPU number: 1
+------------------------------------------------------------
+
+2024/04/22 15:24:08 - mmengine - INFO - Config:
+auto_scale_lr = dict(base_batch_size=8)
+checkpoint = dict(interval=10, max_keep_ckpts=1, type='CheckpointHook')
+default_hooks = dict(
+    checkpoint=dict(interval=20, type='CheckpointHook'),
+    logger=dict(interval=5, type='LoggerHook'),
+    param_scheduler=dict(type='ParamSchedulerHook'),
+    sampler_seed=dict(type='DistSamplerSeedHook'),
+    sync_buffer=dict(type='SyncBuffersHook'),
+    timer=dict(type='IterTimerHook'),
+    visualization=dict(
+        draw_gt=False,
+        draw_pred=False,
+        enable=False,
+        interval=1,
+        show=False,
+        type='VisualizationHook'))
+default_scope = 'mmocr'
+env_cfg = dict(
+    cudnn_benchmark=False,
+    dist_cfg=dict(backend='nccl'),
+    mp_cfg=dict(mp_start_method='fork', opencv_num_threads=0))
+icdar2015_textdet_data_root = '/content/drive/MyDrive/Gammafe/dataset-det'
+icdar2015_textdet_test = dict(
+    ann_file='textdet_test.json',
+    data_root='/content/drive/MyDrive/Gammafe/dataset-det',
+    pipeline=[
+        dict(color_type='color_ignore_orientation', type='LoadImageFromFile'),
+        dict(keep_ratio=True, scale=(
+            4068,
+            1024,
+        ), type='Resize'),
+        dict(
+            type='LoadOCRAnnotations',
+            with_bbox=True,
+            with_label=True,
+            with_polygon=True),
+        dict(
+            meta_keys=(
+                'img_path',
+                'ori_shape',
+                'img_shape',
+                'scale_factor',
+            ),
+            type='PackTextDetInputs'),
+    ],
+    test_mode=True,
+    type='OCRDataset')
+icdar2015_textdet_train = dict(
+    ann_file='textdet_train.json',
+    data_root='/content/drive/MyDrive/Gammafe/dataset-det',
+    filter_cfg=dict(filter_empty_gt=True, min_size=32),
+    pipeline=[
+        dict(color_type='color_ignore_orientation', type='LoadImageFromFile'),
+        dict(
+            type='LoadOCRAnnotations',
+            with_bbox=True,
+            with_label=True,
+            with_polygon=True),
+        dict(
+            brightness=0.12549019607843137,
+            op='ColorJitter',
+            saturation=0.5,
+            type='TorchVisionWrapper'),
+        dict(
+            args=[
+                [
+                    'Fliplr',
+                    0.5,
+                ],
+                dict(cls='Affine', rotate=[
+                    -10,
+                    10,
+                ]),
+                [
+                    'Resize',
+                    [
+                        0.5,
+                        3.0,
+                    ],
+                ],
+            ],
+            type='ImgAugWrapper'),
+        dict(min_side_ratio=0.1, type='RandomCrop'),
+        dict(keep_ratio=True, scale=(
+            640,
+            640,
+        ), type='Resize'),
+        dict(size=(
+            640,
+            640,
+        ), type='Pad'),
+        dict(
+            meta_keys=(
+                'img_path',
+                'ori_shape',
+                'img_shape',
+            ),
+            type='PackTextDetInputs'),
+    ],
+    type='OCRDataset')
+launcher = 'none'
+load_from = 'https://download.openmmlab.com/mmocr/textdet/dbnet/tmp_1.0_pretrain/dbnet_r50dcnv2_fpnc_sbn_2e_synthtext_20210325-ed322016.pth'
+log_level = 'INFO'
+log_processor = dict(by_epoch=True, type='LogProcessor', window_size=10)
+model = dict(
+    backbone=dict(
+        dcn=dict(deform_groups=1, fallback_on_stride=False, type='DCNv2'),
+        depth=50,
+        frozen_stages=-1,
+        init_cfg=dict(checkpoint='torchvision://resnet50', type='Pretrained'),
+        norm_cfg=dict(requires_grad=True, type='BN'),
+        norm_eval=False,
+        num_stages=4,
+        out_indices=(
+            0,
+            1,
+            2,
+            3,
+        ),
+        stage_with_dcn=(
+            False,
+            True,
+            True,
+            True,
+        ),
+        style='pytorch',
+        type='mmdet.ResNet'),
+    data_preprocessor=dict(
+        bgr_to_rgb=True,
+        mean=[
+            123.675,
+            116.28,
+            103.53,
+        ],
+        pad_size_divisor=32,
+        std=[
+            58.395,
+            57.12,
+            57.375,
+        ],
+        type='TextDetDataPreprocessor'),
+    det_head=dict(
+        in_channels=256,
+        module_loss=dict(type='DBModuleLoss'),
+        postprocessor=dict(text_repr_type='quad', type='DBPostprocessor'),
+        type='DBHead'),
+    neck=dict(
+        in_channels=[
+            256,
+            512,
+            1024,
+            2048,
+        ],
+        lateral_channels=256,
+        type='FPNC'),
+    type='DBNet')
+optim_wrapper = dict(
+    optimizer=dict(lr=0.007, momentum=0.9, type='SGD', weight_decay=0.0001),
+    type='OptimWrapper')
+param_scheduler = [
+    dict(end=1200, eta_min=1e-07, power=0.9, type='PolyLR'),
+]
+randomness = dict(seed=None)
+resume = False
+test_cfg = dict(type='TestLoop')
+test_dataloader = dict(
+    batch_size=1,
+    dataset=dict(
+        ann_file='textdet_test.json',
+        data_root='/content/drive/MyDrive/Gammafe/dataset-det',
+        pipeline=[
+            dict(
+                color_type='color_ignore_orientation',
+                type='LoadImageFromFile'),
+            dict(keep_ratio=True, scale=(
+                4068,
+                1024,
+            ), type='Resize'),
+            dict(
+                type='LoadOCRAnnotations',
+                with_bbox=True,
+                with_label=True,
+                with_polygon=True),
+            dict(
+                meta_keys=(
+                    'img_path',
+                    'ori_shape',
+                    'img_shape',
+                    'scale_factor',
+                ),
+                type='PackTextDetInputs'),
+        ],
+        test_mode=True,
+        type='OCRDataset'),
+    num_workers=4,
+    persistent_workers=True,
+    sampler=dict(shuffle=False, type='DefaultSampler'))
+test_evaluator = dict(type='HmeanIOUMetric')
+test_pipeline = [
+    dict(color_type='color_ignore_orientation', type='LoadImageFromFile'),
+    dict(keep_ratio=True, scale=(
+        4068,
+        1024,
+    ), type='Resize'),
+    dict(
+        type='LoadOCRAnnotations',
+        with_bbox=True,
+        with_label=True,
+        with_polygon=True),
+    dict(
+        meta_keys=(
+            'img_path',
+            'ori_shape',
+            'img_shape',
+            'scale_factor',
+        ),
+        type='PackTextDetInputs'),
+]
+train_cfg = dict(max_epochs=1200, type='EpochBasedTrainLoop', val_interval=20)
+train_dataloader = dict(
+    batch_size=8,
+    dataset=dict(
+        ann_file='textdet_train.json',
+        data_root='/content/drive/MyDrive/Gammafe/dataset-det',
+        filter_cfg=dict(filter_empty_gt=True, min_size=32),
+        pipeline=[
+            dict(
+                color_type='color_ignore_orientation',
+                type='LoadImageFromFile'),
+            dict(
+                type='LoadOCRAnnotations',
+                with_bbox=True,
+                with_label=True,
+                with_polygon=True),
+            dict(
+                brightness=0.12549019607843137,
+                op='ColorJitter',
+                saturation=0.5,
+                type='TorchVisionWrapper'),
+            dict(
+                args=[
+                    [
+                        'Fliplr',
+                        0.5,
+                    ],
+                    dict(cls='Affine', rotate=[
+                        -10,
+                        10,
+                    ]),
+                    [
+                        'Resize',
+                        [
+                            0.5,
+                            3.0,
+                        ],
+                    ],
+                ],
+                type='ImgAugWrapper'),
+            dict(min_side_ratio=0.1, type='RandomCrop'),
+            dict(keep_ratio=True, scale=(
+                640,
+                640,
+            ), type='Resize'),
+            dict(size=(
+                640,
+                640,
+            ), type='Pad'),
+            dict(
+                meta_keys=(
+                    'img_path',
+                    'ori_shape',
+                    'img_shape',
+                ),
+                type='PackTextDetInputs'),
+        ],
+        type='OCRDataset'),
+    num_workers=8,
+    persistent_workers=True,
+    sampler=dict(shuffle=True, type='DefaultSampler'))
+train_pipeline = [
+    dict(color_type='color_ignore_orientation', type='LoadImageFromFile'),
+    dict(
+        type='LoadOCRAnnotations',
+        with_bbox=True,
+        with_label=True,
+        with_polygon=True),
+    dict(
+        brightness=0.12549019607843137,
+        op='ColorJitter',
+        saturation=0.5,
+        type='TorchVisionWrapper'),
+    dict(
+        args=[
+            [
+                'Fliplr',
+                0.5,
+            ],
+            dict(cls='Affine', rotate=[
+                -10,
+                10,
+            ]),
+            [
+                'Resize',
+                [
+                    0.5,
+                    3.0,
+                ],
+            ],
+        ],
+        type='ImgAugWrapper'),
+    dict(min_side_ratio=0.1, type='RandomCrop'),
+    dict(keep_ratio=True, scale=(
+        640,
+        640,
+    ), type='Resize'),
+    dict(size=(
+        640,
+        640,
+    ), type='Pad'),
+    dict(
+        meta_keys=(
+            'img_path',
+            'ori_shape',
+            'img_shape',
+        ),
+        type='PackTextDetInputs'),
+]
+val_cfg = dict(type='ValLoop')
+val_dataloader = dict(
+    batch_size=1,
+    dataset=dict(
+        ann_file='textdet_test.json',
+        data_root='/content/drive/MyDrive/Gammafe/dataset-det',
+        pipeline=[
+            dict(
+                color_type='color_ignore_orientation',
+                type='LoadImageFromFile'),
+            dict(keep_ratio=True, scale=(
+                4068,
+                1024,
+            ), type='Resize'),
+            dict(
+                type='LoadOCRAnnotations',
+                with_bbox=True,
+                with_label=True,
+                with_polygon=True),
+            dict(
+                meta_keys=(
+                    'img_path',
+                    'ori_shape',
+                    'img_shape',
+                    'scale_factor',
+                ),
+                type='PackTextDetInputs'),
+        ],
+        test_mode=True,
+        type='OCRDataset'),
+    num_workers=4,
+    persistent_workers=True,
+    sampler=dict(shuffle=False, type='DefaultSampler'))
+val_evaluator = dict(type='HmeanIOUMetric')
+vis_backends = [
+    dict(type='LocalVisBackend'),
+    dict(type='TensorboardVisBackend'),
+]
+visualizer = dict(
+    name='visualizer',
+    type='TextDetLocalVisualizer',
+    vis_backends=[
+        dict(type='LocalVisBackend'),
+    ])
+work_dir = '/content/drive/MyDrive/Gammafe/work_dir'
+
+2024/04/22 15:24:13 - mmengine - INFO - Distributed training is not used, all SyncBatchNorm (SyncBN) layers in the model will be automatically reverted to BatchNormXd layers if they are used.
+2024/04/22 15:24:13 - mmengine - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+before_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) DistSamplerSeedHook                
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) SyncBuffersHook                    
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) SyncBuffersHook                    
+ -------------------- 
+before_val_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) VisualizationHook                  
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_val_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_test_epoch:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+before_test_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_test_iter:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) VisualizationHook                  
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_run:
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+2024/04/22 15:24:14 - mmengine - INFO - load model from: torchvision://resnet50
+2024/04/22 15:24:14 - mmengine - INFO - Loads checkpoint by torchvision backend from path: torchvision://resnet50
+2024/04/22 15:24:14 - mmengine - WARNING - The model and loaded state dict do not match exactly
+
+unexpected key in source state_dict: fc.weight, fc.bias
+
+missing keys in source state_dict: layer2.0.conv2.conv_offset.weight, layer2.0.conv2.conv_offset.bias, layer2.1.conv2.conv_offset.weight, layer2.1.conv2.conv_offset.bias, layer2.2.conv2.conv_offset.weight, layer2.2.conv2.conv_offset.bias, layer2.3.conv2.conv_offset.weight, layer2.3.conv2.conv_offset.bias, layer3.0.conv2.conv_offset.weight, layer3.0.conv2.conv_offset.bias, layer3.1.conv2.conv_offset.weight, layer3.1.conv2.conv_offset.bias, layer3.2.conv2.conv_offset.weight, layer3.2.conv2.conv_offset.bias, layer3.3.conv2.conv_offset.weight, layer3.3.conv2.conv_offset.bias, layer3.4.conv2.conv_offset.weight, layer3.4.conv2.conv_offset.bias, layer3.5.conv2.conv_offset.weight, layer3.5.conv2.conv_offset.bias, layer4.0.conv2.conv_offset.weight, layer4.0.conv2.conv_offset.bias, layer4.1.conv2.conv_offset.weight, layer4.1.conv2.conv_offset.bias, layer4.2.conv2.conv_offset.weight, layer4.2.conv2.conv_offset.bias
+
+Name of parameter - Initialization information
+
+backbone.conv1.weight - torch.Size([64, 3, 7, 7]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.bn1.weight - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.bn1.bias - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.conv1.weight - torch.Size([64, 64, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.bn1.weight - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.bn1.bias - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.conv2.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.bn2.weight - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.bn2.bias - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.conv3.weight - torch.Size([256, 64, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.bn3.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.bn3.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.downsample.0.weight - torch.Size([256, 64, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.downsample.1.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.0.downsample.1.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.conv1.weight - torch.Size([64, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.bn1.weight - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.bn1.bias - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.conv2.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.bn2.weight - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.bn2.bias - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.conv3.weight - torch.Size([256, 64, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.bn3.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.1.bn3.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.conv1.weight - torch.Size([64, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.bn1.weight - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.bn1.bias - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.conv2.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.bn2.weight - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.bn2.bias - torch.Size([64]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.conv3.weight - torch.Size([256, 64, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.bn3.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer1.2.bn3.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.conv1.weight - torch.Size([128, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.bn1.weight - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.bn1.bias - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.conv2.weight - torch.Size([128, 128, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.conv2.conv_offset.weight - torch.Size([27, 128, 3, 3]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer2.0.conv2.conv_offset.bias - torch.Size([27]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer2.0.bn2.weight - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.bn2.bias - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.conv3.weight - torch.Size([512, 128, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.bn3.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.bn3.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.downsample.0.weight - torch.Size([512, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.downsample.1.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.0.downsample.1.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.conv1.weight - torch.Size([128, 512, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.bn1.weight - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.bn1.bias - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.conv2.weight - torch.Size([128, 128, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.conv2.conv_offset.weight - torch.Size([27, 128, 3, 3]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer2.1.conv2.conv_offset.bias - torch.Size([27]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer2.1.bn2.weight - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.bn2.bias - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.conv3.weight - torch.Size([512, 128, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.bn3.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.1.bn3.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.conv1.weight - torch.Size([128, 512, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.bn1.weight - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.bn1.bias - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.conv2.weight - torch.Size([128, 128, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.conv2.conv_offset.weight - torch.Size([27, 128, 3, 3]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer2.2.conv2.conv_offset.bias - torch.Size([27]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer2.2.bn2.weight - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.bn2.bias - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.conv3.weight - torch.Size([512, 128, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.bn3.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.2.bn3.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.conv1.weight - torch.Size([128, 512, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.bn1.weight - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.bn1.bias - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.conv2.weight - torch.Size([128, 128, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.conv2.conv_offset.weight - torch.Size([27, 128, 3, 3]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer2.3.conv2.conv_offset.bias - torch.Size([27]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer2.3.bn2.weight - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.bn2.bias - torch.Size([128]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.conv3.weight - torch.Size([512, 128, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.bn3.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer2.3.bn3.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.conv1.weight - torch.Size([256, 512, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.conv2.conv_offset.weight - torch.Size([27, 256, 3, 3]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer3.0.conv2.conv_offset.bias - torch.Size([27]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer3.0.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.downsample.0.weight - torch.Size([1024, 512, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.downsample.1.weight - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.0.downsample.1.bias - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.conv1.weight - torch.Size([256, 1024, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.conv2.conv_offset.weight - torch.Size([27, 256, 3, 3]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer3.1.conv2.conv_offset.bias - torch.Size([27]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer3.1.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.1.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.conv1.weight - torch.Size([256, 1024, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.conv2.conv_offset.weight - torch.Size([27, 256, 3, 3]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer3.2.conv2.conv_offset.bias - torch.Size([27]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer3.2.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.2.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.conv1.weight - torch.Size([256, 1024, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.conv2.conv_offset.weight - torch.Size([27, 256, 3, 3]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer3.3.conv2.conv_offset.bias - torch.Size([27]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer3.3.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.3.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.conv1.weight - torch.Size([256, 1024, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.conv2.conv_offset.weight - torch.Size([27, 256, 3, 3]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer3.4.conv2.conv_offset.bias - torch.Size([27]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer3.4.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.4.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.conv1.weight - torch.Size([256, 1024, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.conv2.conv_offset.weight - torch.Size([27, 256, 3, 3]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer3.5.conv2.conv_offset.bias - torch.Size([27]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer3.5.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer3.5.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.conv1.weight - torch.Size([512, 1024, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.bn1.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.bn1.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.conv2.weight - torch.Size([512, 512, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.conv2.conv_offset.weight - torch.Size([27, 512, 3, 3]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer4.0.conv2.conv_offset.bias - torch.Size([27]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer4.0.bn2.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.bn2.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.conv3.weight - torch.Size([2048, 512, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.bn3.weight - torch.Size([2048]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.bn3.bias - torch.Size([2048]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.downsample.0.weight - torch.Size([2048, 1024, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.downsample.1.weight - torch.Size([2048]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.0.downsample.1.bias - torch.Size([2048]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.conv1.weight - torch.Size([512, 2048, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.bn1.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.bn1.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.conv2.weight - torch.Size([512, 512, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.conv2.conv_offset.weight - torch.Size([27, 512, 3, 3]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer4.1.conv2.conv_offset.bias - torch.Size([27]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer4.1.bn2.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.bn2.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.conv3.weight - torch.Size([2048, 512, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.bn3.weight - torch.Size([2048]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.1.bn3.bias - torch.Size([2048]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.conv1.weight - torch.Size([512, 2048, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.bn1.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.bn1.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.conv2.weight - torch.Size([512, 512, 3, 3]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.conv2.conv_offset.weight - torch.Size([27, 512, 3, 3]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer4.2.conv2.conv_offset.bias - torch.Size([27]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+backbone.layer4.2.bn2.weight - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.bn2.bias - torch.Size([512]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.conv3.weight - torch.Size([2048, 512, 1, 1]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.bn3.weight - torch.Size([2048]): 
+PretrainedInit: load from torchvision://resnet50 
+
+backbone.layer4.2.bn3.bias - torch.Size([2048]): 
+PretrainedInit: load from torchvision://resnet50 
+
+neck.lateral_convs.0.conv.weight - torch.Size([256, 256, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.lateral_convs.1.conv.weight - torch.Size([256, 512, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.lateral_convs.2.conv.weight - torch.Size([256, 1024, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.lateral_convs.3.conv.weight - torch.Size([256, 2048, 1, 1]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.smooth_convs.0.conv.weight - torch.Size([64, 256, 3, 3]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.smooth_convs.1.conv.weight - torch.Size([64, 256, 3, 3]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.smooth_convs.2.conv.weight - torch.Size([64, 256, 3, 3]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+neck.smooth_convs.3.conv.weight - torch.Size([64, 256, 3, 3]): 
+Initialized by user-defined `init_weights` in ConvModule  
+
+det_head.binarize.0.weight - torch.Size([64, 256, 3, 3]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+det_head.binarize.1.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+det_head.binarize.1.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+det_head.binarize.3.weight - torch.Size([64, 64, 2, 2]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+det_head.binarize.3.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+det_head.binarize.4.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+det_head.binarize.4.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+det_head.binarize.6.weight - torch.Size([64, 1, 2, 2]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+det_head.binarize.6.bias - torch.Size([1]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+det_head.threshold.0.weight - torch.Size([64, 256, 3, 3]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+det_head.threshold.1.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+det_head.threshold.1.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+det_head.threshold.3.weight - torch.Size([64, 64, 2, 2]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+det_head.threshold.3.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+det_head.threshold.4.weight - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+det_head.threshold.4.bias - torch.Size([64]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+det_head.threshold.6.weight - torch.Size([64, 1, 2, 2]): 
+The value is the same before and after calling `init_weights` of DBNet  
+
+det_head.threshold.6.bias - torch.Size([1]): 
+The value is the same before and after calling `init_weights` of DBNet  
+2024/04/22 15:24:14 - mmengine - INFO - Load checkpoint from https://download.openmmlab.com/mmocr/textdet/dbnet/tmp_1.0_pretrain/dbnet_r50dcnv2_fpnc_sbn_2e_synthtext_20210325-ed322016.pth
+2024/04/22 15:24:15 - mmengine - WARNING - "FileClient" will be deprecated in future. Please use io functions in https://mmengine.readthedocs.io/en/latest/api/fileio.html#file-io
+2024/04/22 15:24:15 - mmengine - WARNING - "HardDiskBackend" is the alias of "LocalBackend" and the former will be deprecated in future.
+2024/04/22 15:24:15 - mmengine - INFO - Checkpoints will be saved to /content/drive/MyDrive/Gammafe/work_dir.
+2024/04/22 15:24:34 - mmengine - INFO - Epoch(train)    [1][ 5/81]  lr: 7.0000e-03  eta: 4 days, 10:03:27  time: 3.9283  data_time: 1.1743  memory: 8089  loss: 9.5324  loss_prob: 7.1507  loss_thr: 1.3842  loss_db: 0.9975
+2024/04/22 15:24:41 - mmengine - INFO - Epoch(train)    [1][10/81]  lr: 7.0000e-03  eta: 2 days, 23:18:05  time: 2.6411  data_time: 0.6015  memory: 8089  loss: 7.0804  loss_prob: 4.9704  loss_thr: 1.2545  loss_db: 0.8554
+2024/04/22 15:24:49 - mmengine - INFO - Epoch(train)    [1][15/81]  lr: 7.0000e-03  eta: 2 days, 13:31:40  time: 1.4546  data_time: 0.0294  memory: 8089  loss: 4.4466  loss_prob: 2.6715  loss_thr: 1.1190  loss_db: 0.6561
+2024/04/22 15:24:55 - mmengine - INFO - Epoch(train)    [1][20/81]  lr: 7.0000e-03  eta: 2 days, 7:17:48  time: 1.4558  data_time: 0.0273  memory: 8089  loss: 3.8419  loss_prob: 2.3116  loss_thr: 1.0484  loss_db: 0.4819
+2024/04/22 15:25:03 - mmengine - INFO - Epoch(train)    [1][25/81]  lr: 7.0000e-03  eta: 2 days, 4:45:19  time: 1.4673  data_time: 0.0400  memory: 8089  loss: 3.1514  loss_prob: 1.8835  loss_thr: 0.9481  loss_db: 0.3198
+2024/04/22 15:25:10 - mmengine - INFO - Epoch(train)    [1][30/81]  lr: 7.0000e-03  eta: 2 days, 2:18:12  time: 1.4941  data_time: 0.0474  memory: 8089  loss: 2.9099  loss_prob: 1.7328  loss_thr: 0.8970  loss_db: 0.2800
+2024/04/22 15:25:18 - mmengine - INFO - Epoch(train)    [1][35/81]  lr: 7.0000e-03  eta: 2 days, 0:58:02  time: 1.4639  data_time: 0.0420  memory: 8089  loss: 2.6390  loss_prob: 1.5440  loss_thr: 0.8500  loss_db: 0.2450
+2024/04/22 15:25:25 - mmengine - INFO - Epoch(train)    [1][40/81]  lr: 7.0000e-03  eta: 1 day, 23:45:20  time: 1.4868  data_time: 0.0453  memory: 8089  loss: 2.2545  loss_prob: 1.2457  loss_thr: 0.8134  loss_db: 0.1953
+2024/04/22 15:25:33 - mmengine - INFO - Epoch(train)    [1][45/81]  lr: 7.0000e-03  eta: 1 day, 22:50:08  time: 1.4596  data_time: 0.0415  memory: 8089  loss: 2.1063  loss_prob: 1.1526  loss_thr: 0.7757  loss_db: 0.1780
+2024/04/22 15:25:40 - mmengine - INFO - Epoch(train)    [1][50/81]  lr: 7.0000e-03  eta: 1 day, 22:13:21  time: 1.4863  data_time: 0.0427  memory: 8089  loss: 2.0259  loss_prob: 1.1165  loss_thr: 0.7337  loss_db: 0.1757
+2024/04/22 15:25:47 - mmengine - INFO - Epoch(train)    [1][55/81]  lr: 7.0000e-03  eta: 1 day, 21:33:21  time: 1.4756  data_time: 0.0399  memory: 8089  loss: 2.1362  loss_prob: 1.2158  loss_thr: 0.7271  loss_db: 0.1933
+2024/04/22 15:25:55 - mmengine - INFO - Epoch(train)    [1][60/81]  lr: 7.0000e-03  eta: 1 day, 21:07:07  time: 1.4684  data_time: 0.0425  memory: 8089  loss: 2.0775  loss_prob: 1.1765  loss_thr: 0.7200  loss_db: 0.1810
+2024/04/22 15:26:02 - mmengine - INFO - Epoch(train)    [1][65/81]  lr: 7.0000e-03  eta: 1 day, 20:42:22  time: 1.4847  data_time: 0.0432  memory: 8089  loss: 1.9324  loss_prob: 1.0734  loss_thr: 0.6956  loss_db: 0.1635
+2024/04/22 15:26:09 - mmengine - INFO - Epoch(train)    [1][70/81]  lr: 7.0000e-03  eta: 1 day, 20:08:06  time: 1.4181  data_time: 0.0313  memory: 8089  loss: 1.8066  loss_prob: 0.9885  loss_thr: 0.6625  loss_db: 0.1557
+2024/04/22 15:26:16 - mmengine - INFO - Epoch(train)    [1][75/81]  lr: 7.0000e-03  eta: 1 day, 19:39:04  time: 1.3649  data_time: 0.0262  memory: 8089  loss: 1.6450  loss_prob: 0.8540  loss_thr: 0.6543  loss_db: 0.1367
+2024/04/22 15:26:23 - mmengine - INFO - Epoch(train)    [1][80/81]  lr: 7.0000e-03  eta: 1 day, 19:15:48  time: 1.3787  data_time: 0.0249  memory: 8089  loss: 1.6792  loss_prob: 0.8837  loss_thr: 0.6568  loss_db: 0.1387
+2024/04/22 15:26:23 - mmengine - INFO - Exp name: dbnet_resnet50-dcnv2_fpnc_1200e_icdar2015_20240422_152407
+2024/04/22 15:26:39 - mmengine - INFO - Epoch(train)    [2][ 5/81]  lr: 6.9947e-03  eta: 1 day, 21:20:48  time: 2.1792  data_time: 0.5518  memory: 8089  loss: 1.5445  loss_prob: 0.7845  loss_thr: 0.6318  loss_db: 0.1282
+2024/04/22 15:26:46 - mmengine - INFO - Epoch(train)    [2][10/81]  lr: 6.9947e-03  eta: 1 day, 21:02:15  time: 2.3125  data_time: 0.5558  memory: 8089  loss: 1.4748  loss_prob: 0.7396  loss_thr: 0.6091  loss_db: 0.1261
+2024/04/22 15:26:54 - mmengine - INFO - Epoch(train)    [2][15/81]  lr: 6.9947e-03  eta: 1 day, 20:56:14  time: 1.5369  data_time: 0.0317  memory: 8089  loss: 1.6172  loss_prob: 0.8532  loss_thr: 0.6272  loss_db: 0.1367
+2024/04/22 15:27:02 - mmengine - INFO - Epoch(train)    [2][20/81]  lr: 6.9947e-03  eta: 1 day, 20:44:52  time: 1.5629  data_time: 0.0283  memory: 8089  loss: 1.6617  loss_prob: 0.8992  loss_thr: 0.6233  loss_db: 0.1391
+2024/04/22 15:27:10 - mmengine - INFO - Epoch(train)    [2][25/81]  lr: 6.9947e-03  eta: 1 day, 20:38:09  time: 1.5495  data_time: 0.0344  memory: 8089  loss: 1.4601  loss_prob: 0.7565  loss_thr: 0.5805  loss_db: 0.1231
+2024/04/22 15:27:18 - mmengine - INFO - Epoch(train)    [2][30/81]  lr: 6.9947e-03  eta: 1 day, 20:28:08  time: 1.5461  data_time: 0.0380  memory: 8089  loss: 1.3952  loss_prob: 0.7013  loss_thr: 0.5757  loss_db: 0.1182
+2024/04/22 15:27:25 - mmengine - INFO - Epoch(train)    [2][35/81]  lr: 6.9947e-03  eta: 1 day, 20:22:18  time: 1.5433  data_time: 0.0371  memory: 8089  loss: 1.3396  loss_prob: 0.6674  loss_thr: 0.5601  loss_db: 0.1122
+2024/04/22 15:27:33 - mmengine - INFO - Epoch(train)    [2][40/81]  lr: 6.9947e-03  eta: 1 day, 20:08:18  time: 1.5026  data_time: 0.0344  memory: 8089  loss: 1.6145  loss_prob: 0.8786  loss_thr: 0.6007  loss_db: 0.1351
+2024/04/22 15:27:40 - mmengine - INFO - Epoch(train)    [2][45/81]  lr: 6.9947e-03  eta: 1 day, 19:57:32  time: 1.4546  data_time: 0.0291  memory: 8089  loss: 1.7818  loss_prob: 1.0270  loss_thr: 0.6052  loss_db: 0.1496
+2024/04/22 15:27:47 - mmengine - INFO - Epoch(train)    [2][50/81]  lr: 6.9947e-03  eta: 1 day, 19:44:32  time: 1.4466  data_time: 0.0277  memory: 8089  loss: 1.4823  loss_prob: 0.8080  loss_thr: 0.5477  loss_db: 0.1266
+2024/04/22 15:27:55 - mmengine - INFO - Epoch(train)    [2][55/81]  lr: 6.9947e-03  eta: 1 day, 19:36:50  time: 1.4585  data_time: 0.0382  memory: 8089  loss: 1.3798  loss_prob: 0.7162  loss_thr: 0.5421  loss_db: 0.1215
+2024/04/22 15:28:01 - mmengine - INFO - Epoch(train)    [2][60/81]  lr: 6.9947e-03  eta: 1 day, 19:23:57  time: 1.4452  data_time: 0.0380  memory: 8089  loss: 1.4068  loss_prob: 0.7306  loss_thr: 0.5531  loss_db: 0.1231
+2024/04/22 15:28:09 - mmengine - INFO - Epoch(train)    [2][65/81]  lr: 6.9947e-03  eta: 1 day, 19:21:18  time: 1.4799  data_time: 0.0423  memory: 8089  loss: 1.3608  loss_prob: 0.7043  loss_thr: 0.5399  loss_db: 0.1165
+2024/04/22 15:28:16 - mmengine - INFO - Epoch(train)    [2][70/81]  lr: 6.9947e-03  eta: 1 day, 19:07:19  time: 1.4570  data_time: 0.0417  memory: 8089  loss: 1.4775  loss_prob: 0.8223  loss_thr: 0.5286  loss_db: 0.1267
+2024/04/22 15:28:23 - mmengine - INFO - Epoch(train)    [2][75/81]  lr: 6.9947e-03  eta: 1 day, 18:56:17  time: 1.3694  data_time: 0.0242  memory: 8089  loss: 1.4764  loss_prob: 0.8329  loss_thr: 0.5152  loss_db: 0.1284
+2024/04/22 15:28:30 - mmengine - INFO - Epoch(train)    [2][80/81]  lr: 6.9947e-03  eta: 1 day, 18:43:29  time: 1.3651  data_time: 0.0239  memory: 8089  loss: 1.4276  loss_prob: 0.7824  loss_thr: 0.5210  loss_db: 0.1243
+2024/04/22 15:28:30 - mmengine - INFO - Exp name: dbnet_resnet50-dcnv2_fpnc_1200e_icdar2015_20240422_152407
+2024/04/22 15:28:46 - mmengine - INFO - Epoch(train)    [3][ 5/81]  lr: 6.9895e-03  eta: 1 day, 19:47:01  time: 2.1446  data_time: 0.6846  memory: 8089  loss: 1.6399  loss_prob: 0.9480  loss_thr: 0.5497  loss_db: 0.1423
+2024/04/22 15:28:54 - mmengine - INFO - Epoch(train)    [3][10/81]  lr: 6.9895e-03  eta: 1 day, 19:46:57  time: 2.3673  data_time: 0.6928  memory: 8089  loss: 1.5134  loss_prob: 0.8466  loss_thr: 0.5331  loss_db: 0.1337
+2024/04/22 15:29:01 - mmengine - INFO - Epoch(train)    [3][15/81]  lr: 6.9895e-03  eta: 1 day, 19:36:50  time: 1.5158  data_time: 0.0258  memory: 8089  loss: 1.3362  loss_prob: 0.6913  loss_thr: 0.5304  loss_db: 0.1146
+2024/04/22 15:29:09 - mmengine - INFO - Epoch(train)    [3][20/81]  lr: 6.9895e-03  eta: 1 day, 19:34:15  time: 1.4845  data_time: 0.0312  memory: 8089  loss: 1.5058  loss_prob: 0.8221  loss_thr: 0.5556  loss_db: 0.1281
+2024/04/22 15:29:16 - mmengine - INFO - Epoch(train)    [3][25/81]  lr: 6.9895e-03  eta: 1 day, 19:25:18  time: 1.4881  data_time: 0.0404  memory: 8089  loss: 1.3889  loss_prob: 0.7484  loss_thr: 0.5244  loss_db: 0.1161
+2024/04/22 15:29:24 - mmengine - INFO - Epoch(train)    [3][30/81]  lr: 6.9895e-03  eta: 1 day, 19:23:44  time: 1.4951  data_time: 0.0367  memory: 8089  loss: 1.2970  loss_prob: 0.6734  loss_thr: 0.5168  loss_db: 0.1069
+2024/04/22 15:29:31 - mmengine - INFO - Epoch(train)    [3][35/81]  lr: 6.9895e-03  eta: 1 day, 19:15:40  time: 1.4971  data_time: 0.0362  memory: 8089  loss: 1.3257  loss_prob: 0.6939  loss_thr: 0.5173  loss_db: 0.1145
+2024/04/22 15:29:39 - mmengine - INFO - Epoch(train)    [3][40/81]  lr: 6.9895e-03  eta: 1 day, 19:15:10  time: 1.5066  data_time: 0.0312  memory: 8089  loss: 1.2948  loss_prob: 0.6625  loss_thr: 0.5204  loss_db: 0.1118
+2024/04/22 15:29:46 - mmengine - INFO - Epoch(train)    [3][45/81]  lr: 6.9895e-03  eta: 1 day, 19:08:13  time: 1.5135  data_time: 0.0323  memory: 8089  loss: 1.3189  loss_prob: 0.6857  loss_thr: 0.5164  loss_db: 0.1168
+2024/04/22 15:29:54 - mmengine - INFO - Epoch(train)    [3][50/81]  lr: 6.9895e-03  eta: 1 day, 19:05:07  time: 1.4772  data_time: 0.0351  memory: 8089  loss: 1.4620  loss_prob: 0.8217  loss_thr: 0.5164  loss_db: 0.1240
+2024/04/22 15:30:01 - mmengine - INFO - Epoch(train)    [3][55/81]  lr: 6.9895e-03  eta: 1 day, 18:58:45  time: 1.4776  data_time: 0.0366  memory: 8089  loss: 1.3749  loss_prob: 0.7704  loss_thr: 0.4891  loss_db: 0.1153
+2024/04/22 15:30:09 - mmengine - INFO - Epoch(train)    [3][60/81]  lr: 6.9895e-03  eta: 1 day, 18:58:13  time: 1.5081  data_time: 0.0354  memory: 8089  loss: 1.2361  loss_prob: 0.6424  loss_thr: 0.4851  loss_db: 0.1086
+2024/04/22 15:30:16 - mmengine - INFO - Epoch(train)    [3][65/81]  lr: 6.9895e-03  eta: 1 day, 18:52:06  time: 1.5058  data_time: 0.0329  memory: 8089  loss: 1.2605  loss_prob: 0.6606  loss_thr: 0.4876  loss_db: 0.1123
+2024/04/22 15:30:23 - mmengine - INFO - Epoch(train)    [3][70/81]  lr: 6.9895e-03  eta: 1 day, 18:45:58  time: 1.4230  data_time: 0.0265  memory: 8089  loss: 1.2337  loss_prob: 0.6860  loss_thr: 0.4425  loss_db: 0.1052
+2024/04/22 15:30:30 - mmengine - INFO - Epoch(train)    [3][75/81]  lr: 6.9895e-03  eta: 1 day, 18:38:09  time: 1.3908  data_time: 0.0263  memory: 8089  loss: 1.2135  loss_prob: 0.6728  loss_thr: 0.4389  loss_db: 0.1018
+2024/04/22 15:30:37 - mmengine - INFO - Epoch(train)    [3][80/81]  lr: 6.9895e-03  eta: 1 day, 18:32:32  time: 1.3905  data_time: 0.0263  memory: 8089  loss: 1.1737  loss_prob: 0.6020  loss_thr: 0.4709  loss_db: 0.1007
+2024/04/22 15:30:37 - mmengine - INFO - Exp name: dbnet_resnet50-dcnv2_fpnc_1200e_icdar2015_20240422_152407
+2024/04/22 15:30:53 - mmengine - INFO - Epoch(train)    [4][ 5/81]  lr: 6.9842e-03  eta: 1 day, 19:16:04  time: 2.1916  data_time: 0.5533  memory: 8089  loss: 1.1150  loss_prob: 0.5663  loss_thr: 0.4517  loss_db: 0.0970
+2024/04/22 15:31:00 - mmengine - INFO - Epoch(train)    [4][10/81]  lr: 6.9842e-03  eta: 1 day, 19:10:53  time: 2.2901  data_time: 0.5519  memory: 8089  loss: 1.2022  loss_prob: 0.6266  loss_thr: 0.4672  loss_db: 0.1084
+2024/04/22 15:31:08 - mmengine - INFO - Epoch(train)    [4][15/81]  lr: 6.9842e-03  eta: 1 day, 19:11:51  time: 1.5436  data_time: 0.0245  memory: 8089  loss: 1.3327  loss_prob: 0.7187  loss_thr: 0.4992  loss_db: 0.1148
+2024/04/22 15:31:16 - mmengine - INFO - Epoch(train)    [4][20/81]  lr: 6.9842e-03  eta: 1 day, 19:06:31  time: 1.5367  data_time: 0.0250  memory: 8089  loss: 1.3348  loss_prob: 0.7243  loss_thr: 0.4937  loss_db: 0.1167
+2024/04/22 15:31:24 - mmengine - INFO - Epoch(train)    [4][25/81]  lr: 6.9842e-03  eta: 1 day, 19:06:12  time: 1.5148  data_time: 0.0324  memory: 8089  loss: 1.2298  loss_prob: 0.6524  loss_thr: 0.4680  loss_db: 0.1094
+2024/04/22 15:31:31 - mmengine - INFO - Epoch(train)    [4][30/81]  lr: 6.9842e-03  eta: 1 day, 19:01:31  time: 1.5209  data_time: 0.0378  memory: 8089  loss: 1.1672  loss_prob: 0.6035  loss_thr: 0.4623  loss_db: 0.1014
+2024/04/22 15:31:38 - mmengine - INFO - Epoch(train)    [4][35/81]  lr: 6.9842e-03  eta: 1 day, 18:58:43  time: 1.4766  data_time: 0.0321  memory: 8089  loss: 1.1973  loss_prob: 0.6088  loss_thr: 0.4826  loss_db: 0.1059
+2024/04/22 15:31:45 - mmengine - INFO - Epoch(train)    [4][40/81]  lr: 6.9842e-03  eta: 1 day, 18:52:55  time: 1.4521  data_time: 0.0281  memory: 8089  loss: 1.1991  loss_prob: 0.6212  loss_thr: 0.4721  loss_db: 0.1058
+2024/04/22 15:31:53 - mmengine - INFO - Epoch(train)    [4][45/81]  lr: 6.9842e-03  eta: 1 day, 18:51:58  time: 1.4808  data_time: 0.0265  memory: 8089  loss: 1.2826  loss_prob: 0.7032  loss_thr: 0.4664  loss_db: 0.1131
+2024/04/22 15:32:00 - mmengine - INFO - Epoch(train)    [4][50/81]  lr: 6.9842e-03  eta: 1 day, 18:47:25  time: 1.4979  data_time: 0.0313  memory: 8089  loss: 1.2941  loss_prob: 0.7063  loss_thr: 0.4741  loss_db: 0.1136
+2024/04/22 15:32:08 - mmengine - INFO - Epoch(train)    [4][55/81]  lr: 6.9842e-03  eta: 1 day, 18:46:52  time: 1.5031  data_time: 0.0320  memory: 8089  loss: 1.3564  loss_prob: 0.7613  loss_thr: 0.4775  loss_db: 0.1176
+2024/04/22 15:32:16 - mmengine - INFO - Epoch(train)    [4][60/81]  lr: 6.9842e-03  eta: 1 day, 18:44:13  time: 1.5344  data_time: 0.0356  memory: 8089  loss: 1.3721  loss_prob: 0.7915  loss_thr: 0.4622  loss_db: 0.1184
+2024/04/22 15:32:23 - mmengine - INFO - Epoch(train)    [4][65/81]  lr: 6.9842e-03  eta: 1 day, 18:41:33  time: 1.4932  data_time: 0.0406  memory: 8089  loss: 1.4450  loss_prob: 0.8113  loss_thr: 0.5095  loss_db: 0.1242
+2024/04/22 15:32:30 - mmengine - INFO - Epoch(train)    [4][70/81]  lr: 6.9842e-03  eta: 1 day, 18:36:43  time: 1.4477  data_time: 0.0322  memory: 8089  loss: 1.4740  loss_prob: 0.8174  loss_thr: 0.5252  loss_db: 0.1314
+2024/04/22 15:32:37 - mmengine - INFO - Epoch(train)    [4][75/81]  lr: 6.9842e-03  eta: 1 day, 18:31:54  time: 1.4013  data_time: 0.0256  memory: 8089  loss: 1.3154  loss_prob: 0.7263  loss_thr: 0.4711  loss_db: 0.1180
+2024/04/22 15:32:44 - mmengine - INFO - Epoch(train)    [4][80/81]  lr: 6.9842e-03  eta: 1 day, 18:27:03  time: 1.3954  data_time: 0.0264  memory: 8089  loss: 1.4747  loss_prob: 0.8603  loss_thr: 0.4861  loss_db: 0.1283
+2024/04/22 15:32:45 - mmengine - INFO - Exp name: dbnet_resnet50-dcnv2_fpnc_1200e_icdar2015_20240422_152407
+2024/04/22 15:33:01 - mmengine - INFO - Epoch(train)    [5][ 5/81]  lr: 6.9790e-03  eta: 1 day, 19:04:51  time: 2.2683  data_time: 0.6522  memory: 8089  loss: 1.4290  loss_prob: 0.8064  loss_thr: 0.5007  loss_db: 0.1219
+2024/04/22 15:33:09 - mmengine - INFO - Epoch(train)    [5][10/81]  lr: 6.9790e-03  eta: 1 day, 19:04:15  time: 2.4571  data_time: 0.6808  memory: 8089  loss: 1.2189  loss_prob: 0.6470  loss_thr: 0.4623  loss_db: 0.1096
+2024/04/22 15:33:16 - mmengine - INFO - Epoch(train)    [5][15/81]  lr: 6.9790e-03  eta: 1 day, 19:00:47  time: 1.5214  data_time: 0.0514  memory: 8089  loss: 1.3098  loss_prob: 0.7047  loss_thr: 0.4873  loss_db: 0.1178
+2024/04/22 15:33:24 - mmengine - INFO - Epoch(train)    [5][20/81]  lr: 6.9790e-03  eta: 1 day, 18:58:50  time: 1.4910  data_time: 0.0247  memory: 8089  loss: 1.3149  loss_prob: 0.6905  loss_thr: 0.5091  loss_db: 0.1154
+2024/04/22 15:33:31 - mmengine - INFO - Epoch(train)    [5][25/81]  lr: 6.9790e-03  eta: 1 day, 18:55:37  time: 1.4924  data_time: 0.0300  memory: 8089  loss: 1.1878  loss_prob: 0.6083  loss_thr: 0.4752  loss_db: 0.1044
+2024/04/22 15:33:39 - mmengine - INFO - Epoch(train)    [5][30/81]  lr: 6.9790e-03  eta: 1 day, 18:53:09  time: 1.4787  data_time: 0.0353  memory: 8089  loss: 1.3373  loss_prob: 0.7467  loss_thr: 0.4781  loss_db: 0.1125
+2024/04/22 15:33:46 - mmengine - INFO - Epoch(train)    [5][35/81]  lr: 6.9790e-03  eta: 1 day, 18:50:07  time: 1.4793  data_time: 0.0365  memory: 8089  loss: 1.4138  loss_prob: 0.7906  loss_thr: 0.5024  loss_db: 0.1208
+2024/04/22 15:33:54 - mmengine - INFO - Epoch(train)    [5][40/81]  lr: 6.9790e-03  eta: 1 day, 18:47:18  time: 1.4684  data_time: 0.0370  memory: 8089  loss: 1.3440  loss_prob: 0.7576  loss_thr: 0.4691  loss_db: 0.1173
+2024/04/22 15:34:01 - mmengine - INFO - Epoch(train)    [5][45/81]  lr: 6.9790e-03  eta: 1 day, 18:43:32  time: 1.4482  data_time: 0.0360  memory: 8089  loss: 1.2941  loss_prob: 0.7450  loss_thr: 0.4381  loss_db: 0.1110
+2024/04/22 15:34:08 - mmengine - INFO - Epoch(train)    [5][50/81]  lr: 6.9790e-03  eta: 1 day, 18:40:33  time: 1.4403  data_time: 0.0306  memory: 8089  loss: 1.2161  loss_prob: 0.6519  loss_thr: 0.4580  loss_db: 0.1063
+2024/04/22 15:34:16 - mmengine - INFO - Epoch(train)    [5][55/81]  lr: 6.9790e-03  eta: 1 day, 18:40:20  time: 1.5192  data_time: 0.0494  memory: 8089  loss: 1.1724  loss_prob: 0.6298  loss_thr: 0.4368  loss_db: 0.1059
+2024/04/22 15:34:23 - mmengine - INFO - Epoch(train)    [5][60/81]  lr: 6.9790e-03  eta: 1 day, 18:37:57  time: 1.5310  data_time: 0.0508  memory: 8089  loss: 1.2133  loss_prob: 0.6633  loss_thr: 0.4415  loss_db: 0.1085
+2024/04/22 15:34:31 - mmengine - INFO - Epoch(train)    [5][65/81]  lr: 6.9790e-03  eta: 1 day, 18:37:23  time: 1.5219  data_time: 0.0361  memory: 8089  loss: 1.2718  loss_prob: 0.6889  loss_thr: 0.4691  loss_db: 0.1137
+2024/04/22 15:34:38 - mmengine - INFO - Epoch(train)    [5][70/81]  lr: 6.9790e-03  eta: 1 day, 18:32:47  time: 1.4657  data_time: 0.0331  memory: 8089  loss: 1.2550  loss_prob: 0.6919  loss_thr: 0.4518  loss_db: 0.1113
+2024/04/22 15:34:45 - mmengine - INFO - Epoch(train)    [5][75/81]  lr: 6.9790e-03  eta: 1 day, 18:29:03  time: 1.3856  data_time: 0.0275  memory: 8089  loss: 1.1652  loss_prob: 0.6393  loss_thr: 0.4232  loss_db: 0.1027
+2024/04/22 15:34:52 - mmengine - INFO - Epoch(train)    [5][80/81]  lr: 6.9790e-03  eta: 1 day, 18:25:03  time: 1.3952  data_time: 0.0284  memory: 8089  loss: 1.1411  loss_prob: 0.5974  loss_thr: 0.4415  loss_db: 0.1022
+2024/04/22 15:34:52 - mmengine - INFO - Exp name: dbnet_resnet50-dcnv2_fpnc_1200e_icdar2015_20240422_152407
+2024/04/22 15:35:08 - mmengine - INFO - Epoch(train)    [6][ 5/81]  lr: 6.9737e-03  eta: 1 day, 18:50:12  time: 2.1443  data_time: 0.6170  memory: 8089  loss: 1.0972  loss_prob: 0.5567  loss_thr: 0.4427  loss_db: 0.0978
+2024/04/22 15:35:15 - mmengine - INFO - Epoch(train)    [6][10/81]  lr: 6.9737e-03  eta: 1 day, 18:48:49  time: 2.2982  data_time: 0.6243  memory: 8089  loss: 1.1064  loss_prob: 0.5804  loss_thr: 0.4301  loss_db: 0.0959
+2024/04/22 15:35:22 - mmengine - INFO - Epoch(train)    [6][15/81]  lr: 6.9737e-03  eta: 1 day, 18:45:08  time: 1.4682  data_time: 0.0252  memory: 8089  loss: 1.4093  loss_prob: 0.8016  loss_thr: 0.4912  loss_db: 0.1165
+2024/04/22 15:35:30 - mmengine - INFO - Epoch(train)    [6][20/81]  lr: 6.9737e-03  eta: 1 day, 18:44:37  time: 1.4890  data_time: 0.0245  memory: 8089  loss: 1.3937  loss_prob: 0.7931  loss_thr: 0.4791  loss_db: 0.1215
+2024/04/22 15:35:37 - mmengine - INFO - Epoch(train)    [6][25/81]  lr: 6.9737e-03  eta: 1 day, 18:41:22  time: 1.4969  data_time: 0.0349  memory: 8089  loss: 1.1144  loss_prob: 0.5997  loss_thr: 0.4118  loss_db: 0.1029
+2024/04/22 15:35:45 - mmengine - INFO - Epoch(train)    [6][30/81]  lr: 6.9737e-03  eta: 1 day, 18:40:24  time: 1.4836  data_time: 0.0335  memory: 8089  loss: 1.3281  loss_prob: 0.7625  loss_thr: 0.4533  loss_db: 0.1122
+2024/04/22 15:35:52 - mmengine - INFO - Epoch(train)    [6][35/81]  lr: 6.9737e-03  eta: 1 day, 18:37:54  time: 1.5010  data_time: 0.0343  memory: 8089  loss: 1.3718  loss_prob: 0.7762  loss_thr: 0.4792  loss_db: 0.1164
+2024/04/22 15:36:01 - mmengine - INFO - Epoch(train)    [6][40/81]  lr: 6.9737e-03  eta: 1 day, 18:38:22  time: 1.5386  data_time: 0.0454  memory: 8089  loss: 1.1609  loss_prob: 0.6022  loss_thr: 0.4554  loss_db: 0.1033
+2024/04/22 15:36:08 - mmengine - INFO - Epoch(train)    [6][45/81]  lr: 6.9737e-03  eta: 1 day, 18:35:33  time: 1.5276  data_time: 0.0472  memory: 8089  loss: 1.1183  loss_prob: 0.5862  loss_thr: 0.4312  loss_db: 0.1009
+2024/04/22 15:36:16 - mmengine - INFO - Epoch(train)    [6][50/81]  lr: 6.9737e-03  eta: 1 day, 18:36:45  time: 1.5485  data_time: 0.0405  memory: 8089  loss: 1.1648  loss_prob: 0.6145  loss_thr: 0.4454  loss_db: 0.1049
+2024/04/22 15:36:23 - mmengine - INFO - Epoch(train)    [6][55/81]  lr: 6.9737e-03  eta: 1 day, 18:34:10  time: 1.5532  data_time: 0.0379  memory: 8089  loss: 1.2630  loss_prob: 0.6699  loss_thr: 0.4785  loss_db: 0.1146
+2024/04/22 15:36:31 - mmengine - INFO - Epoch(train)    [6][60/81]  lr: 6.9737e-03  eta: 1 day, 18:34:02  time: 1.5147  data_time: 0.0319  memory: 8089  loss: 1.2835  loss_prob: 0.7001  loss_thr: 0.4701  loss_db: 0.1133
+2024/04/22 15:36:38 - mmengine - INFO - Epoch(train)    [6][65/81]  lr: 6.9737e-03  eta: 1 day, 18:31:11  time: 1.5049  data_time: 0.0324  memory: 8089  loss: 1.2766  loss_prob: 0.7023  loss_thr: 0.4647  loss_db: 0.1097
+2024/04/22 15:36:45 - mmengine - INFO - Epoch(train)    [6][70/81]  lr: 6.9737e-03  eta: 1 day, 18:28:10  time: 1.4194  data_time: 0.0300  memory: 8089  loss: 1.2146  loss_prob: 0.6517  loss_thr: 0.4567  loss_db: 0.1062
+2024/04/22 15:36:52 - mmengine - INFO - Epoch(train)    [6][75/81]  lr: 6.9737e-03  eta: 1 day, 18:24:36  time: 1.3941  data_time: 0.0288  memory: 8089  loss: 1.4168  loss_prob: 0.7972  loss_thr: 0.4966  loss_db: 0.1229
+2024/04/22 15:36:59 - mmengine - INFO - Epoch(train)    [6][80/81]  lr: 6.9737e-03  eta: 1 day, 18:21:37  time: 1.3917  data_time: 0.0282  memory: 8089  loss: 1.4222  loss_prob: 0.8043  loss_thr: 0.4960  loss_db: 0.1218
+2024/04/22 15:37:00 - mmengine - INFO - Exp name: dbnet_resnet50-dcnv2_fpnc_1200e_icdar2015_20240422_152407
+2024/04/22 15:37:16 - mmengine - INFO - Epoch(train)    [7][ 5/81]  lr: 6.9685e-03  eta: 1 day, 18:44:57  time: 2.2238  data_time: 0.5268  memory: 8089  loss: 1.4742  loss_prob: 0.8401  loss_thr: 0.5068  loss_db: 0.1273
+2024/04/22 15:37:23 - mmengine - INFO - Epoch(train)    [7][10/81]  lr: 6.9685e-03  eta: 1 day, 18:42:46  time: 2.3418  data_time: 0.5346  memory: 8089  loss: 1.6569  loss_prob: 0.9932  loss_thr: 0.5180  loss_db: 0.1457
+2024/04/22 15:37:31 - mmengine - INFO - Epoch(train)    [7][15/81]  lr: 6.9685e-03  eta: 1 day, 18:42:15  time: 1.5159  data_time: 0.0282  memory: 8089  loss: 1.7255  loss_prob: 1.0750  loss_thr: 0.5000  loss_db: 0.1505
+2024/04/22 15:37:38 - mmengine - INFO - Epoch(train)    [7][20/81]  lr: 6.9685e-03  eta: 1 day, 18:39:48  time: 1.5056  data_time: 0.0184  memory: 8089  loss: 1.3916  loss_prob: 0.8092  loss_thr: 0.4572  loss_db: 0.1252
+2024/04/22 15:37:46 - mmengine - INFO - Epoch(train)    [7][25/81]  lr: 6.9685e-03  eta: 1 day, 18:39:16  time: 1.5037  data_time: 0.0315  memory: 8089  loss: 1.2033  loss_prob: 0.6540  loss_thr: 0.4403  loss_db: 0.1090
+2024/04/22 15:37:53 - mmengine - INFO - Epoch(train)    [7][30/81]  lr: 6.9685e-03  eta: 1 day, 18:36:46  time: 1.4994  data_time: 0.0339  memory: 8089  loss: 1.1946  loss_prob: 0.6452  loss_thr: 0.4435  loss_db: 0.1059
+2024/04/22 15:38:01 - mmengine - INFO - Epoch(train)    [7][35/81]  lr: 6.9685e-03  eta: 1 day, 18:36:44  time: 1.5148  data_time: 0.0356  memory: 8089  loss: 1.1609  loss_prob: 0.6103  loss_thr: 0.4492  loss_db: 0.1014
+2024/04/22 15:38:08 - mmengine - INFO - Epoch(train)    [7][40/81]  lr: 6.9685e-03  eta: 1 day, 18:33:58  time: 1.5041  data_time: 0.0339  memory: 8089  loss: 1.1500  loss_prob: 0.5982  loss_thr: 0.4524  loss_db: 0.0994
+2024/04/22 15:38:16 - mmengine - INFO - Epoch(train)    [7][45/81]  lr: 6.9685e-03  eta: 1 day, 18:33:01  time: 1.4728  data_time: 0.0360  memory: 8089  loss: 1.1502  loss_prob: 0.5921  loss_thr: 0.4550  loss_db: 0.1031
+2024/04/22 15:38:23 - mmengine - INFO - Epoch(train)    [7][50/81]  lr: 6.9685e-03  eta: 1 day, 18:30:05  time: 1.4648  data_time: 0.0357  memory: 8089  loss: 1.1381  loss_prob: 0.5915  loss_thr: 0.4476  loss_db: 0.0990
+2024/04/22 15:38:31 - mmengine - INFO - Epoch(train)    [7][55/81]  lr: 6.9685e-03  eta: 1 day, 18:29:20  time: 1.4698  data_time: 0.0352  memory: 8089  loss: 1.1036  loss_prob: 0.5862  loss_thr: 0.4214  loss_db: 0.0960
+2024/04/22 15:38:38 - mmengine - INFO - Epoch(train)    [7][60/81]  lr: 6.9685e-03  eta: 1 day, 18:26:28  time: 1.4693  data_time: 0.0351  memory: 8089  loss: 1.0938  loss_prob: 0.5807  loss_thr: 0.4151  loss_db: 0.0980
+2024/04/22 15:38:45 - mmengine - INFO - Epoch(train)    [7][65/81]  lr: 6.9685e-03  eta: 1 day, 18:25:26  time: 1.4583  data_time: 0.0296  memory: 8089  loss: 1.2416  loss_prob: 0.7039  loss_thr: 0.4325  loss_db: 0.1052
+2024/04/22 15:38:52 - mmengine - INFO - Epoch(train)    [7][70/81]  lr: 6.9685e-03  eta: 1 day, 18:22:03  time: 1.4371  data_time: 0.0282  memory: 8089  loss: 1.3527  loss_prob: 0.7583  loss_thr: 0.4801  loss_db: 0.1142
+2024/04/22 15:38:59 - mmengine - INFO - Epoch(train)    [7][75/81]  lr: 6.9685e-03  eta: 1 day, 18:19:26  time: 1.3801  data_time: 0.0249  memory: 8089  loss: 1.2859  loss_prob: 0.6822  loss_thr: 0.4926  loss_db: 0.1111
+2024/04/22 15:39:06 - mmengine - INFO - Epoch(train)    [7][80/81]  lr: 6.9685e-03  eta: 1 day, 18:16:27  time: 1.3906  data_time: 0.0277  memory: 8089  loss: 1.3237  loss_prob: 0.7211  loss_thr: 0.4868  loss_db: 0.1159
+2024/04/22 15:39:06 - mmengine - INFO - Exp name: dbnet_resnet50-dcnv2_fpnc_1200e_icdar2015_20240422_152407
+2024/04/22 15:39:23 - mmengine - INFO - Epoch(train)    [8][ 5/81]  lr: 6.9632e-03  eta: 1 day, 18:36:30  time: 2.2106  data_time: 0.6207  memory: 8089  loss: 1.2963  loss_prob: 0.7326  loss_thr: 0.4513  loss_db: 0.1124
+2024/04/22 15:39:31 - mmengine - INFO - Epoch(train)    [8][10/81]  lr: 6.9632e-03  eta: 1 day, 18:37:29  time: 2.4438  data_time: 0.6578  memory: 8089  loss: 1.3151  loss_prob: 0.7651  loss_thr: 0.4364  loss_db: 0.1136
+2024/04/22 15:39:38 - mmengine - INFO - Epoch(train)    [8][15/81]  lr: 6.9632e-03  eta: 1 day, 18:35:28  time: 1.5598  data_time: 0.0562  memory: 8089  loss: 1.2524  loss_prob: 0.7183  loss_thr: 0.4253  loss_db: 0.1088
+2024/04/22 15:39:46 - mmengine - INFO - Epoch(train)    [8][20/81]  lr: 6.9632e-03  eta: 1 day, 18:35:00  time: 1.5071  data_time: 0.0236  memory: 8089  loss: 1.1659  loss_prob: 0.6373  loss_thr: 0.4232  loss_db: 0.1054
+2024/04/22 15:39:53 - mmengine - INFO - Epoch(train)    [8][25/81]  lr: 6.9632e-03  eta: 1 day, 18:33:07  time: 1.5102  data_time: 0.0324  memory: 8089  loss: 1.1510  loss_prob: 0.6080  loss_thr: 0.4347  loss_db: 0.1083
+2024/04/22 15:40:01 - mmengine - INFO - Epoch(train)    [8][30/81]  lr: 6.9632e-03  eta: 1 day, 18:32:35  time: 1.5068  data_time: 0.0411  memory: 8089  loss: 1.1252  loss_prob: 0.5895  loss_thr: 0.4364  loss_db: 0.0992
+2024/04/22 15:40:08 - mmengine - INFO - Epoch(train)    [8][35/81]  lr: 6.9632e-03  eta: 1 day, 18:30:40  time: 1.5039  data_time: 0.0406  memory: 8089  loss: 1.2032  loss_prob: 0.6362  loss_thr: 0.4619  loss_db: 0.1052
+2024/04/22 15:40:16 - mmengine - INFO - Epoch(train)    [8][40/81]  lr: 6.9632e-03  eta: 1 day, 18:29:56  time: 1.4955  data_time: 0.0350  memory: 8089  loss: 1.2063  loss_prob: 0.6414  loss_thr: 0.4558  loss_db: 0.1090
+2024/04/22 15:40:23 - mmengine - INFO - Epoch(train)    [8][45/81]  lr: 6.9632e-03  eta: 1 day, 18:28:03  time: 1.4948  data_time: 0.0403  memory: 8089  loss: 1.1489  loss_prob: 0.6071  loss_thr: 0.4400  loss_db: 0.1019
+2024/04/22 15:40:31 - mmengine - INFO - Epoch(train)    [8][50/81]  lr: 6.9632e-03  eta: 1 day, 18:27:26  time: 1.4984  data_time: 0.0485  memory: 8089  loss: 1.2307  loss_prob: 0.6497  loss_thr: 0.4728  loss_db: 0.1082
+2024/04/22 15:40:38 - mmengine - INFO - Epoch(train)    [8][55/81]  lr: 6.9632e-03  eta: 1 day, 18:25:25  time: 1.4910  data_time: 0.0467  memory: 8089  loss: 1.2370  loss_prob: 0.6565  loss_thr: 0.4698  loss_db: 0.1107
+2024/04/22 15:40:46 - mmengine - INFO - Epoch(train)    [8][60/81]  lr: 6.9632e-03  eta: 1 day, 18:24:45  time: 1.4885  data_time: 0.0359  memory: 8089  loss: 1.1291  loss_prob: 0.6077  loss_thr: 0.4204  loss_db: 0.1010
+2024/04/22 15:40:53 - mmengine - INFO - Epoch(train)    [8][65/81]  lr: 6.9632e-03  eta: 1 day, 18:22:40  time: 1.4841  data_time: 0.0341  memory: 8089  loss: 1.1516  loss_prob: 0.6184  loss_thr: 0.4277  loss_db: 0.1055
+2024/04/22 15:41:00 - mmengine - INFO - Epoch(train)    [8][70/81]  lr: 6.9632e-03  eta: 1 day, 18:20:18  time: 1.4150  data_time: 0.0315  memory: 8089  loss: 1.2218  loss_prob: 0.6545  loss_thr: 0.4588  loss_db: 0.1086
+2024/04/22 15:41:07 - mmengine - INFO - Epoch(train)    [8][75/81]  lr: 6.9632e-03  eta: 1 day, 18:17:40  time: 1.3907  data_time: 0.0270  memory: 8089  loss: 1.4515  loss_prob: 0.8417  loss_thr: 0.4842  loss_db: 0.1256
+2024/04/22 15:41:14 - mmengine - INFO - Epoch(train)    [8][80/81]  lr: 6.9632e-03  eta: 1 day, 18:15:04  time: 1.3789  data_time: 0.0287  memory: 8089  loss: 1.3779  loss_prob: 0.8004  loss_thr: 0.4597  loss_db: 0.1178
+2024/04/22 15:41:14 - mmengine - INFO - Exp name: dbnet_resnet50-dcnv2_fpnc_1200e_icdar2015_20240422_152407
+2024/04/22 15:41:30 - mmengine - INFO - Epoch(train)    [9][ 5/81]  lr: 6.9580e-03  eta: 1 day, 18:31:05  time: 2.1535  data_time: 0.5588  memory: 8089  loss: 1.1319  loss_prob: 0.5962  loss_thr: 0.4355  loss_db: 0.1002
+2024/04/22 15:41:37 - mmengine - INFO - Epoch(train)    [9][10/81]  lr: 6.9580e-03  eta: 1 day, 18:30:09  time: 2.3074  data_time: 0.5655  memory: 8089  loss: 1.3728  loss_prob: 0.7772  loss_thr: 0.4730  loss_db: 0.1226
+2024/04/22 15:41:45 - mmengine - INFO - Epoch(train)    [9][15/81]  lr: 6.9580e-03  eta: 1 day, 18:29:03  time: 1.5122  data_time: 0.0361  memory: 8089  loss: 1.2694  loss_prob: 0.7165  loss_thr: 0.4432  loss_db: 0.1097
+2024/04/22 15:41:52 - mmengine - INFO - Epoch(train)    [9][20/81]  lr: 6.9580e-03  eta: 1 day, 18:27:51  time: 1.5000  data_time: 0.0362  memory: 8089  loss: 1.1047  loss_prob: 0.5889  loss_thr: 0.4160  loss_db: 0.0998
+2024/04/22 15:42:00 - mmengine - INFO - Epoch(train)    [9][25/81]  lr: 6.9580e-03  eta: 1 day, 18:27:16  time: 1.5211  data_time: 0.0380  memory: 8089  loss: 1.2531  loss_prob: 0.7019  loss_thr: 0.4445  loss_db: 0.1068
+2024/04/22 15:42:08 - mmengine - INFO - Epoch(train)    [9][30/81]  lr: 6.9580e-03  eta: 1 day, 18:26:30  time: 1.5382  data_time: 0.0365  memory: 8089  loss: 1.1820  loss_prob: 0.6527  loss_thr: 0.4270  loss_db: 0.1023
+2024/04/22 15:42:15 - mmengine - INFO - Epoch(train)    [9][35/81]  lr: 6.9580e-03  eta: 1 day, 18:25:41  time: 1.5271  data_time: 0.0452  memory: 8089  loss: 1.1793  loss_prob: 0.6260  loss_thr: 0.4454  loss_db: 0.1079
+2024/04/22 15:42:23 - mmengine - INFO - Epoch(train)    [9][40/81]  lr: 6.9580e-03  eta: 1 day, 18:24:16  time: 1.4986  data_time: 0.0457  memory: 8089  loss: 1.1503  loss_prob: 0.6017  loss_thr: 0.4477  loss_db: 0.1009
+2024/04/22 15:42:30 - mmengine - INFO - Epoch(train)    [9][45/81]  lr: 6.9580e-03  eta: 1 day, 18:23:13  time: 1.4873  data_time: 0.0368  memory: 8089  loss: 0.9529  loss_prob: 0.4911  loss_thr: 0.3755  loss_db: 0.0863
+2024/04/22 15:42:38 - mmengine - INFO - Epoch(train)    [9][50/81]  lr: 6.9580e-03  eta: 1 day, 18:21:52  time: 1.4893  data_time: 0.0389  memory: 8089  loss: 1.0329  loss_prob: 0.5303  loss_thr: 0.4101  loss_db: 0.0925
+2024/04/22 15:42:45 - mmengine - INFO - Epoch(train)    [9][55/81]  lr: 6.9580e-03  eta: 1 day, 18:20:30  time: 1.4743  data_time: 0.0380  memory: 8089  loss: 1.1310  loss_prob: 0.5762  loss_thr: 0.4538  loss_db: 0.1009
+2024/04/22 15:42:52 - mmengine - INFO - Epoch(train)    [9][60/81]  lr: 6.9580e-03  eta: 1 day, 18:19:19  time: 1.4792  data_time: 0.0345  memory: 8089  loss: 1.1775  loss_prob: 0.6156  loss_thr: 0.4570  loss_db: 0.1049
+2024/04/22 15:43:00 - mmengine - INFO - Epoch(train)    [9][65/81]  lr: 6.9580e-03  eta: 1 day, 18:17:29  time: 1.4577  data_time: 0.0324  memory: 8089  loss: 1.3565  loss_prob: 0.7578  loss_thr: 0.4803  loss_db: 0.1184
+2024/04/22 15:43:07 - mmengine - INFO - Epoch(train)    [9][70/81]  lr: 6.9580e-03  eta: 1 day, 18:15:28  time: 1.4193  data_time: 0.0283  memory: 8089  loss: 1.3268  loss_prob: 0.7402  loss_thr: 0.4692  loss_db: 0.1174
+2024/04/22 15:43:14 - mmengine - INFO - Epoch(train)    [9][75/81]  lr: 6.9580e-03  eta: 1 day, 18:13:13  time: 1.3976  data_time: 0.0284  memory: 8089  loss: 1.2676  loss_prob: 0.6784  loss_thr: 0.4791  loss_db: 0.1101
+2024/04/22 15:43:20 - mmengine - INFO - Epoch(train)    [9][80/81]  lr: 6.9580e-03  eta: 1 day, 18:10:54  time: 1.3813  data_time: 0.0265  memory: 8089  loss: 1.2413  loss_prob: 0.6553  loss_thr: 0.4772  loss_db: 0.1087
+2024/04/22 15:43:21 - mmengine - INFO - Exp name: dbnet_resnet50-dcnv2_fpnc_1200e_icdar2015_20240422_152407
+2024/04/22 15:43:38 - mmengine - INFO - Epoch(train)   [10][ 5/81]  lr: 6.9527e-03  eta: 1 day, 18:28:02  time: 2.2821  data_time: 0.5510  memory: 8089  loss: 1.1213  loss_prob: 0.5875  loss_thr: 0.4345  loss_db: 0.0993
+2024/04/22 15:43:46 - mmengine - INFO - Epoch(train)   [10][10/81]  lr: 6.9527e-03  eta: 1 day, 18:27:30  time: 2.4576  data_time: 0.5560  memory: 8089  loss: 1.4043  loss_prob: 0.8143  loss_thr: 0.4725  loss_db: 0.1176
+2024/04/22 15:43:53 - mmengine - INFO - Epoch(train)   [10][15/81]  lr: 6.9527e-03  eta: 1 day, 18:26:16  time: 1.5155  data_time: 0.0287  memory: 8089  loss: 1.3598  loss_prob: 0.7886  loss_thr: 0.4548  loss_db: 0.1164
+2024/04/22 15:44:00 - mmengine - INFO - Epoch(train)   [10][20/81]  lr: 6.9527e-03  eta: 1 day, 18:24:55  time: 1.4761  data_time: 0.0245  memory: 8089  loss: 1.0839  loss_prob: 0.5749  loss_thr: 0.4141  loss_db: 0.0948
+2024/04/22 15:44:08 - mmengine - INFO - Epoch(train)   [10][25/81]  lr: 6.9527e-03  eta: 1 day, 18:24:17  time: 1.5031  data_time: 0.0403  memory: 8089  loss: 1.1291  loss_prob: 0.6102  loss_thr: 0.4193  loss_db: 0.0996
+2024/04/22 15:44:15 - mmengine - INFO - Epoch(train)   [10][30/81]  lr: 6.9527e-03  eta: 1 day, 18:22:50  time: 1.4971  data_time: 0.0422  memory: 8089  loss: 1.1708  loss_prob: 0.6258  loss_thr: 0.4405  loss_db: 0.1045
+2024/04/22 15:44:23 - mmengine - INFO - Epoch(train)   [10][35/81]  lr: 6.9527e-03  eta: 1 day, 18:22:13  time: 1.4972  data_time: 0.0380  memory: 8089  loss: 1.2501  loss_prob: 0.7006  loss_thr: 0.4444  loss_db: 0.1052
+2024/04/22 15:44:30 - mmengine - INFO - Epoch(train)   [10][40/81]  lr: 6.9527e-03  eta: 1 day, 18:20:51  time: 1.4996  data_time: 0.0381  memory: 8089  loss: 1.2206  loss_prob: 0.6954  loss_thr: 0.4179  loss_db: 0.1072
+2024/04/22 15:44:38 - mmengine - INFO - Epoch(train)   [10][45/81]  lr: 6.9527e-03  eta: 1 day, 18:20:03  time: 1.4903  data_time: 0.0431  memory: 8089  loss: 1.1254  loss_prob: 0.5960  loss_thr: 0.4263  loss_db: 0.1030
+2024/04/22 15:44:45 - mmengine - INFO - Epoch(train)   [10][50/81]  lr: 6.9527e-03  eta: 1 day, 18:18:25  time: 1.4760  data_time: 0.0434  memory: 8089  loss: 1.1898  loss_prob: 0.6206  loss_thr: 0.4653  loss_db: 0.1039
+2024/04/22 15:44:53 - mmengine - INFO - Epoch(train)   [10][55/81]  lr: 6.9527e-03  eta: 1 day, 18:18:06  time: 1.4977  data_time: 0.0395  memory: 8089  loss: 1.1715  loss_prob: 0.6109  loss_thr: 0.4555  loss_db: 0.1052
+2024/04/22 15:45:01 - mmengine - INFO - Epoch(train)   [10][60/81]  lr: 6.9527e-03  eta: 1 day, 18:17:23  time: 1.5421  data_time: 0.0409  memory: 8089  loss: 1.2316  loss_prob: 0.6755  loss_thr: 0.4486  loss_db: 0.1075
+2024/04/22 15:45:08 - mmengine - INFO - Epoch(train)   [10][65/81]  lr: 6.9527e-03  eta: 1 day, 18:17:16  time: 1.5515  data_time: 0.0393  memory: 8089  loss: 1.2059  loss_prob: 0.6660  loss_thr: 0.4370  loss_db: 0.1029
+2024/04/22 15:45:15 - mmengine - INFO - Epoch(train)   [10][70/81]  lr: 6.9527e-03  eta: 1 day, 18:15:19  time: 1.4888  data_time: 0.0374  memory: 8089  loss: 1.0909  loss_prob: 0.5742  loss_thr: 0.4205  loss_db: 0.0962
+2024/04/22 15:45:23 - mmengine - INFO - Epoch(train)   [10][75/81]  lr: 6.9527e-03  eta: 1 day, 18:13:37  time: 1.4100  data_time: 0.0269  memory: 8089  loss: 1.1742  loss_prob: 0.6177  loss_thr: 0.4526  loss_db: 0.1039
+2024/04/22 15:45:29 - mmengine - INFO - Epoch(train)   [10][80/81]  lr: 6.9527e-03  eta: 1 day, 18:11:22  time: 1.3924  data_time: 0.0251  memory: 8089  loss: 1.1416  loss_prob: 0.5936  loss_thr: 0.4449  loss_db: 0.1031
+2024/04/22 15:45:30 - mmengine - INFO - Exp name: dbnet_resnet50-dcnv2_fpnc_1200e_icdar2015_20240422_152407
+2024/04/22 15:45:46 - mmengine - INFO - Epoch(train)   [11][ 5/81]  lr: 6.9474e-03  eta: 1 day, 18:25:15  time: 2.2029  data_time: 0.7259  memory: 8089  loss: 1.1864  loss_prob: 0.6177  loss_thr: 0.4610  loss_db: 0.1076
+2024/04/22 15:45:54 - mmengine - INFO - Epoch(train)   [11][10/81]  lr: 6.9474e-03  eta: 1 day, 18:24:50  time: 2.3810  data_time: 0.7509  memory: 8089  loss: 1.1342  loss_prob: 0.5892  loss_thr: 0.4428  loss_db: 0.1023
