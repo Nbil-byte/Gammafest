@@ -24,8 +24,7 @@ The project primarily revolves around a Jupyter Notebook (`handwriting_training.
 
 1. Clone the MMOCR repository:
    ```bash
-   git clone https://github.com/open-mmlab/mmocr.git
-   cd mmocr
+   https://github.com/Nbil-byte/Gammafest/tree/master
    pip install -e .
    ```
 
@@ -58,7 +57,3 @@ To modify the model configuration, such as model architecture or training hyperp
 ## Results
 
 Once the training is complete, the model and evaluation metrics will be saved to the specified directory in your Google Drive (or local directory). You can then use the trained model for inference on new handwriting data.
-
-## Acknowledgements
-
-This project is built using the excellent [MMOCR](https://github.com/open-mmlab/mmocr) toolbox. Many thanks to the contributors of this open-source project.
